@@ -20,4 +20,7 @@ export const exampleRouter = createTRPCRouter({
       }
     })
   }),
+  deletAll:publicProcedure.mutation(({ctx})=>{
+    return ctx.prisma.form.deleteMany()
+  })
 });

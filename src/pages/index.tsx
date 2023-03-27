@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Form, Input, Button } from "antd";
+import {Form as form2} from '@prisma/client'
 
 type FormData = {
   name: string;
@@ -17,10 +18,19 @@ const Home: NextPage = () => {
  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
  const load=api.example.load.useQuery()
  const save=api.example.save.useMutation() 
+ const deletAll=api.example.deletAll.useMutation()
  const [form] = Form.useForm();
-  
+load.refetch()
+ const [mydata,setmydata]=useState<FormData[]>()
   const [formData, setFormData] = useState<FormData>({ name: "", email: "" });
   const [notification,setNotification]=useState("")
+  
+  console.log('----------------',load.data)
+  useEffect(()=>{
+    if(load.data){
+      setmydata(load.data as FormData[])
+    }
+  },[load.data])
   const handleSubmit = () => {
     console.log(formData);
   };
@@ -33,7 +43,8 @@ const Home: NextPage = () => {
   const handleSaveToDb=async()=>{
     setNotification('')
    await save.mutate({...form.getFieldsValue()})
-   await load.refetch()
+//   await load.refetch()
+    setmydata(load.data as FormData[])
     if(save.isSuccess){
       setNotification('data saved to db')
       
@@ -48,7 +59,7 @@ const Home: NextPage = () => {
   const handleLoadFromDb=()=>{
     setNotification('')
     setNotification('')
-         load.refetch()
+         //load.refetch()
          form.setFieldsValue(load.data)
          console.log('data from database',load.data)
          if(load.data){
@@ -79,6 +90,11 @@ const handelAddToForm=(e:FormData)=>{
    // console.log(formData)
   };
 
+  const handleDeletAll=()=>{
+     deletAll.mutate()
+    load.refetch()
+  }
+
   /* useEffect(() => {
     //handleLoadFromLocalStorage();
     //console.log("form data from use effect",formData)
@@ -94,7 +110,7 @@ const handelAddToForm=(e:FormData)=>{
       <main className="flex min-h-screen flex-col items-center justify-center bg-slate-800">
       <p className="text-xl">{notification}</p>
       <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto">
-        {load.data?.map((item,index)=>{
+        {load.data&&load.data.map((item,index)=>{
           return <div key={index} onClick={()=>{handelAddToForm({name:item.name,email:item.email ,phone:item.phone as string})}} className="border-2 border-black w-fit h-fit p-2 " >
                 <p>name: {item.name}</p>
                 <p>email: {item.email}</p>
@@ -161,6 +177,8 @@ const handelAddToForm=(e:FormData)=>{
      {/*  <Button type="primary" onClick={handleLoadFromDb}>
         Load from db
       </Button> */}
+      <br/>
+      <button className="mt-5 border-black border-2  p-2" onClick={handleDeletAll}>Delet all from db</button>
     </Form>
 
       </main>
