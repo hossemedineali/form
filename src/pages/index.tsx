@@ -79,9 +79,9 @@ const handelAddToForm=(e:FormData)=>{
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-slate-800">
       <p className="text-xl">{notification}</p>
-      <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto">
+      <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto pt-1 gap-2">
         {load.data&&load.data.map((item,index)=>{
-          return <div key={index} onClick={()=>{handelAddToForm({name:item.name,email:item.email ,phone:item.phone as string})}} className="border-2 border-black w-fit h-fit p-2 " >
+          return <div key={index} onClick={()=>{handelAddToForm({name:item.name,email:item.email ,phone:item.phone as string})}} className="border-2 border-black w-fit h-fit p-2  cursor-pointer hover:bg-blue-900 hover:text-white hover:border-blue-900" >
                 <p>name: {item.name}</p>
                 <p>email: {item.email}</p>
                 <p>phone: {item.phone}</p>
