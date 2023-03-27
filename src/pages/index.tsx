@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   };
   const handleSaveToLocalStorage = () => {
     setNotification('')
-    localStorage.setItem("formData", JSON.stringify(formData));
+    localStorage.setItem("formData", JSON.stringify(form.getFieldsValue()));
     setNotification('Data saved to localStorage')
   };
   const handleSaveToDb=()=>{
