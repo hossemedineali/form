@@ -27,18 +27,22 @@ const Home: NextPage = () => {
   const handleSaveToLocalStorage = () => {
     setNotification('')
     localStorage.setItem("formData", JSON.stringify(form.getFieldsValue()));
+    console.log(form.getFieldsValue())
     setNotification('Data saved to localStorage')
   };
-  const handleSaveToDb=()=>{
+  const handleSaveToDb=async()=>{
     setNotification('')
-    save.mutate({...form.getFieldsValue()})
+   await save.mutate({...form.getFieldsValue()})
+   await load.refetch()
     if(save.isSuccess){
       setNotification('data saved to db')
+      
     }
     if(save.isError){
       setNotification('Error while saving data to the db')
     }
     console.log(save.data)
+   
   }
 
   const handleLoadFromDb=()=>{
@@ -56,7 +60,9 @@ const Home: NextPage = () => {
          
   }
 
-
+const handelAddToForm=(e:FormData)=>{
+      form.setFieldsValue(e)
+}
   const handleLoadFromLocalStorage = () => {
     console.log('log handler run')
     const savedFormData = localStorage.getItem("formData");
@@ -87,6 +93,16 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-slate-800">
       <p className="text-xl">{notification}</p>
+      <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto">
+        {load.data?.map((item,index)=>{
+          return <div key={index} onClick={()=>{handelAddToForm({name:item.name,email:item.email ,phone:item.phone as string})}} className="border-2 border-black w-fit h-fit p-2 " >
+                <p>name: {item.name}</p>
+                <p>email: {item.email}</p>
+                <p>phone: {item.phone}</p>
+             </div>
+        })}
+      </div>
+
       <Form form={form} onFinish={handleSubmit} initialValues={formData} >
       <Form.Item
         name="name"
@@ -133,22 +149,18 @@ const Home: NextPage = () => {
       <Button  type="primary" htmlType="submit">
         Submit
       </Button>
-            <br/>
-      <Button  type="primary" onClick={handleSaveToLocalStorage}>
-        Save to localStorage
-      </Button>
-      <br/>
-      <Button type="primary" onClick={handleLoadFromLocalStorage}>
+     {/*  <Button  type="primary" onClick={handleSaveToLocalStorage}>
+        Save 
+      </Button> */}
+      {/* <Button type="primary" onClick={handleLoadFromLocalStorage}>
         Load from localStorage
-      </Button>
-          <br/>
+      </Button> */}
       <Button type="primary" onClick={handleSaveToDb}>
         Save to db
       </Button>
-      <br/>
-      <Button type="primary" onClick={handleLoadFromDb}>
+     {/*  <Button type="primary" onClick={handleLoadFromDb}>
         Load from db
-      </Button>
+      </Button> */}
     </Form>
 
       </main>
