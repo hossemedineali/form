@@ -51,7 +51,7 @@ const Home: NextPage = () => {
           setNotification('data loaded from db')
          }
          if(!load.data){
-          setNotification('error loading data from db')
+          setNotification('error loading data from')
          }
          
   }
