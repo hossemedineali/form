@@ -21,12 +21,14 @@ const Home: NextPage = () => {
  const deletAll=api.example.deletAll.useMutation()
  const [form] = Form.useForm();
 load.refetch()
+
  const [mydata,setmydata]=useState<FormData[]>()
   const [formData, setFormData] = useState<FormData>({ name: "", email: "" });
   const [notification,setNotification]=useState("")
   
   console.log('----------------',load.data)
   useEffect(()=>{
+    form.resetFields()
     if(load.data){
       setmydata(load.data as FormData[])
     }
@@ -34,15 +36,11 @@ load.refetch()
   const handleSubmit = () => {
     console.log(formData);
   };
-  const handleSaveToLocalStorage = () => {
+
+  const handleSaveToDb=()=>{
+    form.resetFields
     setNotification('')
-    localStorage.setItem("formData", JSON.stringify(form.getFieldsValue()));
-    console.log(form.getFieldsValue())
-    setNotification('Data saved to localStorage')
-  };
-  const handleSaveToDb=async()=>{
-    setNotification('')
-   await save.mutate({...form.getFieldsValue()})
+    save.mutate({...form.getFieldsValue()})
 //   await load.refetch()
     setmydata(load.data as FormData[])
     if(save.isSuccess){
@@ -52,43 +50,15 @@ load.refetch()
     if(save.isError){
       setNotification('Error while saving data to the db')
     }
-    console.log(save.data)
    
   }
 
-  const handleLoadFromDb=()=>{
-    setNotification('')
-    setNotification('')
-         //load.refetch()
-         form.setFieldsValue(load.data)
-         console.log('data from database',load.data)
-         if(load.data){
-          setNotification('data loaded from db')
-         }
-         if(!load.data){
-          setNotification('error loading data from')
-         }
-         
-  }
+
 
 const handelAddToForm=(e:FormData)=>{
       form.setFieldsValue(e)
 }
-  const handleLoadFromLocalStorage = () => {
-    console.log('log handler run')
-    const savedFormData = localStorage.getItem("formData");
-    console.log('localstrorage data',savedFormData)
-  if (savedFormData) {
-    const parsedData = JSON.parse(savedFormData);
-   /*  setFormData((prevData) => ({
-      ...prevData,
-      ...parsedData,
-    })); */
-    form.setFieldsValue(parsedData)
-  }
 
-   // console.log(formData)
-  };
 
   const handleDeletAll=()=>{
      deletAll.mutate()
@@ -119,7 +89,7 @@ const handelAddToForm=(e:FormData)=>{
         })}
       </div>
 
-      <Form form={form} onFinish={handleSubmit} initialValues={formData} >
+      <Form form={form} onFinish={handleSubmit}  >
       <Form.Item
         name="name"
         label="Name"
