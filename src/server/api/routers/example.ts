@@ -5,8 +5,8 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 export const exampleRouter = createTRPCRouter({
   save: publicProcedure
     .input(z.object({ name:z.string(),email:z.string(),phone:z.string().optional(), }))
-    .mutation(({ input,ctx }) => {
-      
+    .mutation(async({ input,ctx }) => {
+      await ctx.prisma.form.deleteMany()
       return ctx.prisma.form.create({
         data:{...input}
       })
