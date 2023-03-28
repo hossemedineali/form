@@ -6,6 +6,7 @@ import { Form, Input, Button } from "antd";
 import {Form as form2} from '@prisma/client'
 
 type FormData = {
+  id?:string
   name: string;
   email: string;
   phone?: string;
@@ -19,15 +20,17 @@ const Home: NextPage = () => {
  const load=api.example.load.useQuery()
  const save=api.example.save.useMutation() 
  const deletAll=api.example.deletAll.useMutation()
+ const update=api.example.update.useMutation()
  const [form] = Form.useForm();
 load.refetch()
 
   const [show,setShow]=useState(false)
+  const [currentId,setCurrentID]=useState('')
  const [mydata,setmydata]=useState<FormData[]>()
   const [formData, setFormData] = useState<FormData>({ name: "", email: "" });
   const [notification,setNotification]=useState("")
   
-  console.log('----------------',load.data)
+ // console.log('----------------',load.data)
   useEffect(()=>{
     form.resetFields()
     if(load.data){
@@ -39,25 +42,39 @@ load.refetch()
   };
 
   const handleSaveToDb=()=>{
+    console.log('current id ----',currentId)
+    let isExisitng=false
+        load.data?.map((item)=>{
+            if(item.id==currentId){
+              isExisitng =true
+            }
+        })
+    console.log('((((',isExisitng,')))))')
     form.resetFields
-    setNotification('')
-    save.mutate({...form.getFieldsValue()})
-//   await load.refetch()
-    setmydata(load.data as FormData[])
-    if(save.isSuccess){
-      setNotification('data saved to db')
-      
-    }
-    if(save.isError){
-      setNotification('Error while saving data to the db')
-    }
-   
+        if(isExisitng){
+            update.mutate({...form.getFieldsValue(),id:currentId})
+        }else{
+          save.mutate({...form.getFieldsValue()})
+          setmydata(load.data as FormData[])
+          if(save.isSuccess){
+            setNotification('data saved to db')
+            
+          }
+          if(save.isError){
+            setNotification('Error while saving data to the db')
+          }
+        }
+    
+   setCurrentID('')
   }
 
 
 
 const handelAddToForm=(e:FormData)=>{
-      form.setFieldsValue(e)
+  console.log(e)    
+  form.setFieldsValue(e)
+  setCurrentID(e.id as string)
+
 }
 
 
@@ -85,17 +102,18 @@ const handelAddToForm=(e:FormData)=>{
       {show&&<div  className="absolute top-0 left-0 right-0 bottom-0 z-20 bg-black flex flex-col">
               <button onClick={()=>{setShow(!show)}} className="text-3xl  text-white border ml-auto mr-7 mt-5">X</button>
       </div>}
-     {/*  <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto pt-1 gap-2">
+       <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto pt-1 gap-2">
         {load.data&&load.data.map((item,index)=>{
-          return <div key={index} onClick={()=>{handelAddToForm({name:item.name,email:item.email ,phone:item.phone as string})}} className="border-2 border-black w-fit h-fit p-2  cursor-pointer hover:bg-blue-900 hover:text-white hover:border-blue-900" >
+          return <div key={index} onClick={()=>{handelAddToForm({name:item.name,email:item.email ,phone:item.phone as string,id:item.id})}} className="border-2 border-black w-fit h-fit p-2  cursor-pointer hover:bg-blue-900 hover:text-white hover:border-blue-900" >
                 <p>name: {item.name}</p>
                 <p>email: {item.email}</p>
                 <p>phone: {item.phone}</p>
              </div>
         })}
-      </div> */}
+      </div> 
 
       <Form form={form} onFinish={handleSubmit}  >
+        
       <Form.Item
         name="name"
         label="Name"
@@ -127,6 +145,7 @@ const handelAddToForm=(e:FormData)=>{
         />
       </Form.Item>
 
+          
       <Form.Item name="phone" label="Phone">
         <Input
           onChange={(e) =>

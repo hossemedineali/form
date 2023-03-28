@@ -13,7 +13,7 @@ export const exampleRouter = createTRPCRouter({
   load: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.form.findMany({
       select:{
-        id:false,
+        id:true,
         name:true,
         email:true,
         phone:true
@@ -22,5 +22,12 @@ export const exampleRouter = createTRPCRouter({
   }),
   deletAll:publicProcedure.mutation(({ctx})=>{
     return ctx.prisma.form.deleteMany()
+  }),
+  update:publicProcedure.input(z.object({id:z.string(),name:z.string(),email:z.string(),phone:z.string().optional(),}))
+  .mutation(({ctx,input})=>{
+      return ctx.prisma.form.update({
+        where:{id:input.id},
+        data:{email:input.email,phone:input.phone,name:input.name}
+      })
   })
 });
