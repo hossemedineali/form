@@ -1,9 +1,9 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Form, Input, Button } from "antd";
-import {Form as form2} from '@prisma/client'
+import { Table } from "antd";
+import { api } from "~/utils/api";
 
 type FormData = {
   id?:string
@@ -12,8 +12,29 @@ type FormData = {
   phone?: string;
 };
 
+const columns = [
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: "Phone",
+    dataIndex: "phone",
+    key: "phone",
+  },
+];
 
-import { api } from "~/utils/api";
+const fakedata=[
+  { name: "John", email: "john@example.com", phone: "123-456-7890" },
+  { name: "Jane", email: "jane@example.com", phone: "234-567-8901" },
+  { name: "Bob", email: "bob@example.com", phone: "345-678-9012" },
+]
 
 const Home: NextPage = () => {
  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -101,6 +122,11 @@ const handelAddToForm=(e:FormData)=>{
            </button>
       {show&&<div  className="absolute top-0 left-0 right-0 bottom-0 z-20 bg-black flex flex-col">
               <button onClick={()=>{setShow(!show)}} className="text-3xl  text-white border ml-auto mr-7 mt-5">X</button>
+              <Table dataSource={load.data} columns={columns} 
+              onRow={(record) => ({
+        onClick: () => {console.log(record);handelAddToForm(record as FormData);setShow(!show)},
+      })}
+ />
       </div>}
        <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto pt-1 gap-2">
         {load.data&&load.data.map((item,index)=>{
