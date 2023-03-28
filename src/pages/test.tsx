@@ -18,15 +18,22 @@ const options = [
 
 const FormWithDropdowns: React.FC<Props> = () => {
   const [form] = Form.useForm();
+
   const [secondDropdownOptions, setSecondDropdownOptions] = useState<string[]>([]);
 
   const handleFirstDropdownChange = (value: string) => {
-    // Find the selected options from the options array
-    const selectedOption = options.find((option) => option.label === value);
-    if (selectedOption) {
-      setSecondDropdownOptions(selectedOption.options);
-    }
-  };
+  // Find the selected options from the options array
+  const selectedOption = options.find((option) => option.label === value);
+  if (selectedOption) {
+    setSecondDropdownOptions(selectedOption.options);
+    form.setFieldsValue({ secondDropdown: undefined }); // clear the value of the second dropdown menu
+    form.setFields([
+      // clear the placeholder of the second dropdown menu
+      { name: "secondDropdown", errors: [], touched: false, validating: false },
+    ]);
+  }
+};
+
 
   const handleSubmit = (values: any) => {
     console.log(values);
