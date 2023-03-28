@@ -120,8 +120,8 @@ const handelAddToForm=(e:FormData)=>{
         <button onClick={()=>{setShow(!show)}} className="absolute top-7 border-white border-2 p-2 rounded-xl text-white text-xl right-7">
             show saved data
            </button>
-      {show&&<div  className="absolute top-0 left-0 right-0 bottom-0 z-20 bg-black flex flex-col">
-              <button onClick={()=>{setShow(!show)}} className="text-3xl  text-white border ml-auto mr-7 mt-5">X</button>
+      {show&&<div  className="absolute  z-20 bg-white border min-w-[120px] flex flex-col">
+              <button onClick={()=>{setShow(!show)}} className="text-3xl  text-black border ml-auto mr-7 mt-5">X</button>
               <Table dataSource={load.data} columns={columns} 
               onRow={(record) => ({
         onClick: () => {console.log(record);handelAddToForm(record as FormData);setShow(!show)},
