@@ -49,9 +49,7 @@ load.refetch()
   const [currentId,setCurrentID]=useState('')
  const [mydata,setmydata]=useState<FormData[]>()
   const [formData, setFormData] = useState<FormData>({ name: "", email: "" });
-  const [notification,setNotification]=useState("")
   
- // console.log('----------------',load.data)
   useEffect(()=>{
     form.resetFields()
     if(load.data){
@@ -63,14 +61,12 @@ load.refetch()
   };
 
   const handleSaveToDb=()=>{
-    console.log('current id ----',currentId)
     let isExisitng=false
         load.data?.map((item)=>{
             if(item.id==currentId){
               isExisitng =true
             }
         })
-    console.log('((((',isExisitng,')))))')
     form.resetFields
         if(isExisitng){
             update.mutate({...form.getFieldsValue(),id:currentId})
@@ -78,11 +74,9 @@ load.refetch()
           save.mutate({...form.getFieldsValue()})
           setmydata(load.data as FormData[])
           if(save.isSuccess){
-            setNotification('data saved to db')
             
           }
           if(save.isError){
-            setNotification('Error while saving data to the db')
           }
         }
     
@@ -92,22 +86,15 @@ load.refetch()
 
 
 const handelAddToForm=(e:FormData)=>{
-  console.log(e)    
   form.setFieldsValue(e)
-  setCurrentID(e.id as string)
-
-}
-
+  setCurrentID(e.id as string)}
 
   const handleDeletAll=()=>{
      deletAll.mutate()
     load.refetch()
   }
 
-  /* useEffect(() => {
-    //handleLoadFromLocalStorage();
-    //console.log("form data from use effect",formData)
-  }, [formData]); */
+  
 
   return (
     <>
@@ -124,20 +111,11 @@ const handelAddToForm=(e:FormData)=>{
               <button onClick={()=>{setShow(!show)}} className="text-3xl  text-black border ml-auto mr-7 mt-5">X</button>
               <Table dataSource={load.data} columns={columns} 
               onRow={(record) => ({
-        onClick: () => {console.log(record);handelAddToForm(record as FormData);setShow(!show)},
+        onClick: () => {handelAddToForm(record as FormData);setShow(!show)},
       })}
  />
       </div>}
-      {/*  <div className="w-full h-40 mb-5 min-h-40 bg-slate-300 flex overflow-x-auto pt-1 gap-2">
-        {load.data&&load.data.map((item,index)=>{
-          return <div key={index} onClick={()=>{handelAddToForm({name:item.name,email:item.email ,phone:item.phone as string,id:item.id})}} className="border-2 border-black w-fit h-fit p-2  cursor-pointer hover:bg-blue-900 hover:text-white hover:border-blue-900" >
-                <p>name: {item.name}</p>
-                <p>email: {item.email}</p>
-                <p>phone: {item.phone}</p>
-             </div>
-        })}
-      </div>  */}
-
+     
       <Form form={form} onFinish={handleSubmit}  >
         
       <Form.Item
