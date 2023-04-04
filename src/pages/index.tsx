@@ -51,10 +51,12 @@ const Home: NextPage = () => {
  const save=api.example.save.useMutation() 
  const deletAll=api.example.deletAll.useMutation()
  const update=api.example.update.useMutation()
+ const DeleteOne=api.example.deleteOne.useMutation()
  const [form] = Form.useForm();
 load.refetch()
 
   const [show,setShow]=useState(false)
+  const [notification, setnotification] = useState(false)
   const [currentId,setCurrentID]=useState('')
  const [mydata,setmydata]=useState<FormData[]>()
   const [formData, setFormData] = useState<FormData>({ name: "", email: "" });
@@ -105,7 +107,8 @@ const handelAddToForm=(e:FormData)=>{
 
   const handleDelete = (id: string) => {
    // deleteEntry.mutate(id);
-   console.log(id)
+  DeleteOne.mutate({id})
+  setnotification(true)
   };
   
 
@@ -128,8 +131,12 @@ const handelAddToForm=(e:FormData)=>{
       })}
  />
       </div>}
-     
-      <Form form={form} onFinish={handleSubmit}  >
+     {notification&&<div className="mb-auto relative p-10 w-fit bg-slate-400">
+     {DeleteOne.isSuccess&&<p className="bg-green-500 text-white text-2xl"> record deleted </p>}
+      {DeleteOne.isError&&<p className="bg-red-500 text-white text-2xl"> error while deleting the record </p>}
+      <button onClick={()=>{setnotification(false)}} className="absolute top-3 right-3 text-3xl">X</button>
+      </div>}
+      <Form form={form} onFinish={handleSubmit} className="my-auto" >
         
       <Form.Item
         name="name"
