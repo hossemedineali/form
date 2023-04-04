@@ -12,23 +12,7 @@ type FormData = {
   phone?: string;
 };
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Phone",
-    dataIndex: "phone",
-    key: "phone",
-  },
-];
+
 
 const fakedata=[
   { name: "John", email: "john@example.com", phone: "123-456-7890" },
@@ -37,8 +21,33 @@ const fakedata=[
 ]
 
 const Home: NextPage = () => {
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: ( record :FormData) => (
+        <Button type="link" danger onClick={() => handleDelete(record.id as string)}>Delete</Button>
+      ),
+    },
+  ];
  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
  const load=api.example.load.useQuery()
+ 
  const save=api.example.save.useMutation() 
  const deletAll=api.example.deletAll.useMutation()
  const update=api.example.update.useMutation()
@@ -94,6 +103,10 @@ const handelAddToForm=(e:FormData)=>{
     load.refetch()
   }
 
+  const handleDelete = (id: string) => {
+   // deleteEntry.mutate(id);
+   console.log(id)
+  };
   
 
   return (
@@ -107,7 +120,7 @@ const handelAddToForm=(e:FormData)=>{
         <button onClick={()=>{setShow(!show)}} className="absolute top-7 border-white border-2 p-2 rounded-xl text-white text-xl right-7">
             show saved data
            </button>
-      {show&&<div  className="absolute  z-20 bg-white border min-w-[120px] flex flex-col">
+      {show&&<div  className="absolute  z-20 bg-white border min-w-[240px] flex flex-col">
               <button onClick={()=>{setShow(!show)}} className="text-3xl  text-black border ml-auto mr-7 mt-5">X</button>
               <Table dataSource={load.data} columns={columns} 
               onRow={(record) => ({
@@ -177,7 +190,7 @@ const handelAddToForm=(e:FormData)=>{
         Load from db
       </Button> */}
       <br/>
-      <button className="mt-5 border-black border-2  p-2" onClick={handleDeletAll}>Delet all from db</button>
+      <button className="mt-5 border-black border-2  p-2 text-white" onClick={handleDeletAll}>Delet all from db</button>
     </Form>
 
       </main>
